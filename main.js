@@ -1,5 +1,3 @@
-  import { MakeAnimation, animationsStorage } from './animations';
-
   const getCookie = (name) => {
     const cookies = document.cookie.split(/;\s?/).map((cookie) => cookie.trim().split(/\s?=\s?/));
     const [, value] = cookies.find(([cookieName]) => cookieName === name) || [];
@@ -9,7 +7,6 @@
   const setCookie = (name, value) => {
     document.cookie = `${name}=${value}; max-age=${3600 * 24 * 365 * 10}`;
   }
-
 
   const createMessage = (prevTime, currTime) => {
     const diffTime = new Date(currTime - prevTime);
@@ -55,14 +52,80 @@
   const messageField = document.querySelector('.message');
   const spinnersBar = document.getElementById('spinnersBar');
   const screen = document.querySelector('.screen');
-  const titleSpinner = document.querySelector('.title-spinner');
+
+  class MakeAnimation {
+    constructor({ slides, getNextSlide }) {
+      this.point = 0;
+      this.slides = slides.slice();
+      if (getNextSlide) {
+        this.getNextSlide = getNextSlide;
+      }
+    }
+
+    getNextSlide() {
+      const slide = this.slides[this.point];
+      this.point = (this.point + 1) % this.slides.length;
+      return slide;
+    }
+  };
+
+  const animationsStorage = {
+    1: {
+      slides: ['▖   ', '▖ ▖  ', '▖ ▖ ▖'],
+    },
+    2: {
+      slides: ['●   ', ' ●  ', '  ● ', '   ●'],
+      getNextSlide() {
+        const str = `(${this.slides[this.point]})`;
+        if (this.point === this.slides.length - 1) {
+          this.slides = this.slides.reverse();
+          this.point = 1;
+        } else {
+          this.point += 1;
+        }
+        return str;
+      }
+    },
+    3: {
+      slides: '─╲│╱',
+    },
+    4: {
+      slides: '┛┻┗┣┳┓',
+    },
+    5: {
+      slides: '☱☲☴',
+    },
+    6: {
+      slides: ['▂', '▅', '▆', '▇', '█', '▇', '▆', '▅', '▂'],
+    },
+    7: {
+      slides: '⠁⠂⠄⠂',
+    },
+    8: {
+      slides: '◣◤◥',
+    },
+    9: {
+      slides: '◰◳◱',
+    },
+    10: {
+      slides: ['   =', '  ==', ' ===', '===='],
+      getNextSlide() {
+        const str = `[${this.slides[this.point]}]`;
+        if (this.point === this.slides.length - 1) {
+          this.slides = this.slides.map((slide) => slide.split('').reverse().join('')).reverse();
+          this.point = 0;
+        } else {
+          this.point += 1;
+        }
+        return str;
+      }
+    }
+  };
 
   const mountAnimation = (animationData, container) => {
     const animation = new MakeAnimation(animationData);
     const id = setInterval(() => {
       const slide = animation.getNextSlide();
-      console.clear();
-      console.log(slide);
       if (container === 'title') {
         document.title = slide;
       } else {
@@ -88,11 +151,15 @@
   document.addEventListener('DOMContentLoaded', () => {
     const animationNumb = getCookie('animation');
     let newTitleId;
+    let newPreviewId;
     if (animationNumb === '') {
       newTitleId = mountAnimation(animationsStorage[1], 'title');
+      newPreviewId = mountAnimation(animationsStorage[1], screen);
     } else {
       newTitleId = mountAnimation(animationsStorage[animationNumb], 'title');
+      newPreviewId = mountAnimation(animationsStorage[animationNumb], screen);
     }
+    intervalsId.preview = newPreviewId;
     intervalsId.title = newTitleId;
   });
 

@@ -1,0 +1,39 @@
+.container {
+  width: 80vw;
+  margin: auto;
+}
+.message {
+  padding: 25px;
+  border-bottom: 1px solid black;
+  text-align: center;
+}
+.animations-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 200px;
+  padding: 25px 0 0 0;
+}
+
+#spinnersBar {
+  width: 150px;
+  padding: 10px;
+  border-radius: 4px;
+  font-weight: 600;
+  background-color: lightgray;
+  border: none;
+  box-shadow: 0 0 2px black;
+}
+
+.screen-container {
+  width: 200px;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: lightgray;
+}
+
+.screen {
+  font-size: 28px;
+}
